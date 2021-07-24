@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  注意使用服务器打开
+  <script>
+    // b 页面（接受数据）
+    if (!!window.SharedWorker) {
+      var myWorker = new SharedWorker("SharedWorker.js");
+      myWorker.port.addEventListener(
+        "message",
+        (e) => {
+          console.log("接受到消息：", e.data);
+        },
+        false
+      );
+      myWorker.port.start();
+      document.onclick = function () {
+        myWorker.port.postMessage("get");
+      };
+    }
+  </script>
+</body>
+
+</html>
