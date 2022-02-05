@@ -5,7 +5,11 @@ import "./index.css";
 class Square extends React.Component {
   render() {
     return (
-      <button className="square" onClick={() => this.props.onClick()}>
+      <button
+        className="square"
+        style={this.props.highlightStyle}
+        onClick={() => this.props.onClick()}
+      >
         {this.props.value}
       </button>
     );
@@ -13,8 +17,23 @@ class Square extends React.Component {
 }
 
 class Board extends React.Component {
+  highlightDots(i) {
+    if (this.props.winDots.length && this.props.winDots.indexOf(i) > -1) {
+      return { background: "green" };
+    }
+    return {};
+  }
+
   renderSquare(i) {
-    return <Square key={i} value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />;
+    let style = this.highlightDots(i);
+    return (
+      <Square
+        key={i}
+        highlightStyle={style}
+        value={this.props.squares[i]}
+        onClick={() => this.props.onClick(i)}
+      />
+    );
   }
 
   render() {
@@ -68,7 +87,9 @@ class Game extends React.Component {
     const col = Math.floor(i % 3) + 1;
     const row = Math.floor(i / 3) + 1;
 
-    if (calculateWinner(squares) || squares[i]) {
+    // 注意这里实际获取的是赢家名 X 或者 O 或者 null
+    const isWin = calculateWinner(squares).isWin;
+    if (isWin || squares[i]) {
       return;
     }
     squares[i] = this.state.xIsNext ? "X" : "O";
@@ -113,7 +134,10 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const res = calculateWinner(current.squares);
+    const isWin = res.isWin;
+    const winner = res.winner;
+    const dots = res.dots;
 
     // 传入的是一个函数组件
     const moves = history.map((step, move) => {
@@ -145,15 +169,20 @@ class Game extends React.Component {
     });
 
     let status;
-    if (winner) {
+    if (isWin) {
       status = "Winner: " + winner;
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     }
+
     return (
       <div className="game">
         <div className="game-board">
-          <Board squares={current.squares} onClick={(i) => this.handleClick(i)} />
+          <Board
+            squares={current.squares}
+            winDots={isWin ? dots : []}
+            onClick={(i) => this.handleClick(i)}
+          />
         </div>
         <div className="game-info">
           <div>{status}</div>
@@ -177,15 +206,23 @@ function calculateWinner(squares) {
     [0, 4, 8],
     [2, 4, 6],
   ];
+  let res = {
+    isWin: false,
+    winner: null,
+    dots: [],
+  };
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     // 判断 a 是否存在，并判断 a = b = c
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
+      res.isWin = true;
+      res.winner = squares[a];
+      res.dots.push(a, b, c);
       // 返回 X 或者 O
-      return squares[a];
+      return res;
     }
   }
-  return null;
+  return res;
 }
 
 // ========================================
