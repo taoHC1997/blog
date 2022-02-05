@@ -138,6 +138,7 @@ class Game extends React.Component {
     const isWin = res.isWin;
     const winner = res.winner;
     const dots = res.dots;
+    const isDraw = res.isDraw;
 
     // 传入的是一个函数组件
     const moves = history.map((step, move) => {
@@ -174,6 +175,9 @@ class Game extends React.Component {
     } else {
       status = "Next player: " + (this.state.xIsNext ? "X" : "O");
     }
+    if (isDraw) {
+      status = "平局！！！";
+    }
 
     return (
       <div className="game">
@@ -208,6 +212,7 @@ function calculateWinner(squares) {
   ];
   let res = {
     isWin: false,
+    isDraw: false,
     winner: null,
     dots: [],
   };
@@ -222,6 +227,7 @@ function calculateWinner(squares) {
       return res;
     }
   }
+  res.isDraw = squares.every((i) => i !== null);
   return res;
 }
 
