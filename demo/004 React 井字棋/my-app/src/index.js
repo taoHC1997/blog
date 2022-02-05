@@ -3,12 +3,6 @@ import ReactDOM from "react-dom";
 import "./index.css";
 
 class Square extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     value: null,
-  //   };
-  // }
   render() {
     return (
       <button className="square" onClick={() => this.props.onClick()}>
@@ -19,36 +13,11 @@ class Square extends React.Component {
 }
 
 class Board extends React.Component {
-  // constructor(props) {
-  //   super(props);
-  //   this.state = {
-  //     squares: Array(9).fill(null),
-  //     xIsNext: true,
-  //   };
-  // }
-
-  // handleClick(i) {
-  //   const squares = this.state.squares.slice();
-  //   if (calculateWinner(squares) || squares[i]) {
-  //     return;
-  //   }
-  //   squares[i] = this.state.xIsNext ? "X" : "O";
-  //   this.setState({ squares: squares, xIsNext: !this.state.xIsNext });
-  // }
-
   renderSquare(i) {
     return <Square value={this.props.squares[i]} onClick={() => this.props.onClick(i)} />;
   }
 
   render() {
-    // const winner = calculateWinner(this.state.squares);
-    // let status;
-    // if (winner) {
-    //   status = "Winner: " + winner;
-    // } else {
-    //   status = "Next player: " + (this.state.xIsNext ? "X" : "O");
-    // }
-
     return (
       <div>
         <div className="board-row">
@@ -78,6 +47,8 @@ class Game extends React.Component {
       history: [
         {
           squares: Array(9).fill(null),
+          thatCol: 0,
+          thatRow: 0,
         },
       ],
       stepNumber: 0,
@@ -89,6 +60,11 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+
+    // 当前点行列获取
+    const col = Math.floor(i % 3) + 1;
+    const row = Math.floor(i / 3) + 1;
+
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
@@ -97,6 +73,8 @@ class Game extends React.Component {
       history: history.concat([
         {
           squares: squares,
+          thatCol: col,
+          thatRow: row,
         },
       ]),
       stepNumber: history.length,
@@ -118,7 +96,9 @@ class Game extends React.Component {
 
     // 传入的是一个函数组件
     const moves = history.map((step, move) => {
-      const desc = move ? "Go to move #" + move : "Go to game start";
+      const desc = move
+        ? `Go to move #${move} (${step.thatCol}, ${step.thatRow})`
+        : "Go to game start";
       return (
         <li key={move}>
           <button onClick={() => this.jumpTo(move)}>{desc}</button>
