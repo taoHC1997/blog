@@ -55,6 +55,7 @@ class Game extends React.Component {
       ],
       stepNumber: 0,
       xIsNext: true,
+      toggle: false,
     };
   }
 
@@ -101,6 +102,14 @@ class Game extends React.Component {
     });
   }
 
+  // 只改变顶级变量
+  toggleMoves() {
+    const toggle = !this.state.toggle;
+    this.setState({
+      toggle: toggle,
+    });
+  }
+
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
@@ -125,6 +134,16 @@ class Game extends React.Component {
         </li>
       );
     });
+
+    // 历史记录排序
+    moves.sort((a, b) => {
+      if (this.state.toggle) {
+        return b.key - a.key;
+      } else {
+        return a.key - b.key;
+      }
+    });
+
     let status;
     if (winner) {
       status = "Winner: " + winner;
@@ -138,6 +157,7 @@ class Game extends React.Component {
         </div>
         <div className="game-info">
           <div>{status}</div>
+          <button onClick={() => this.toggleMoves()}>切换历史顺序</button>
           <ol>{moves}</ol>
         </div>
       </div>
