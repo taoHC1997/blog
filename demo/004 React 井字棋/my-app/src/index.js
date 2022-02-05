@@ -49,6 +49,7 @@ class Game extends React.Component {
           squares: Array(9).fill(null),
           thatCol: 0,
           thatRow: 0,
+          active: false,
         },
       ],
       stepNumber: 0,
@@ -75,6 +76,7 @@ class Game extends React.Component {
           squares: squares,
           thatCol: col,
           thatRow: row,
+          active: false,
         },
       ]),
       stepNumber: history.length,
@@ -83,7 +85,16 @@ class Game extends React.Component {
   }
 
   jumpTo(step) {
+    let history = this.state.history;
+
+    // 设置当前步加粗
+    history.forEach((i) => {
+      i.active = false;
+    });
+    history[step].active = true;
+
     this.setState({
+      history: history,
       stepNumber: step,
       xIsNext: step % 2 === 0,
     });
@@ -99,9 +110,17 @@ class Game extends React.Component {
       const desc = move
         ? `Go to move #${move} (${step.thatCol}, ${step.thatRow})`
         : "Go to game start";
+      let style = {};
+      if (step.active) {
+        style = {
+          fontWeight: 600,
+        };
+      }
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={() => this.jumpTo(move)} style={style}>
+            {desc}
+          </button>
         </li>
       );
     });
