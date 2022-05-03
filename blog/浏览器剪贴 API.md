@@ -1,15 +1,37 @@
 # 浏览器剪贴 API
 
-- 文档：
+- 第三方：
+  - https://github.com/zenorocha/clipboard.js/
+- 参考：
+  - https://www.zhangxinxu.com/wordpress/2021/10/js-copy-paste-clipboard/
+
+## 剪贴板 API
+
+- 剪贴板 API 文档：
+  - https://developer.mozilla.org/zh-CN/docs/Web/API/Clipboard
+
+### 简单示例
+
+```js
+if (navigator.clipboard) {
+  navigator.clipboard.writeText(text);
+}
+```
+
+## 剪贴事件 API （老版本）
+
+- 事件文档：
   - https://developer.mozilla.org/zh-CN/docs/Web/API/Element/copy_event
   - https://developer.mozilla.org/zh-CN/docs/Web/API/Element/cut_event
   - https://developer.mozilla.org/zh-CN/docs/Web/API/Element/paste_event
 
-## 简单使用
-
 > `cut` 剪切可参考 `copy`
 
 ### `copy` 复制
+
+#### 示例一
+
+> 修改默认复制行为，然后主动触发（ `document.execCommand("copy")` ）复制事件
 
 ```html
 <!-- 点击复制 + 修改复制内容 -->
@@ -42,6 +64,21 @@
       console.log("复制失败");
     }
   });
+</script>
+```
+
+### 示例二
+
+> 利用 API 直接将文本加入剪贴板
+
+```html
+<button id="test">test</button>
+<script>
+  const test = document.getElementById("test");
+  test.addEventListener("click", copyToClipboard(123));
+  function copyToClipboard(text) {
+    navigator.clipboard.writeText(text);
+  }
 </script>
 ```
 
