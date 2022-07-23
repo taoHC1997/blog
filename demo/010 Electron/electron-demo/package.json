@@ -1,0 +1,14 @@
+{
+  "name": "electron-demo",
+  "version": "1.0.0",
+  "description": "Demo",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "James Tao",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^19.0.8"
+  }
+}
